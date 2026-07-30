@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="feature\authentication\commands\resetpassword\" />
+    <Folder Include="feature\authentication\commands\refreshtoken\" />
+    <Folder Include="feature\authentication\commands\registeremployee\" />
+    <Folder Include="feature\authentication\commands\changepassword\" />
+    <Folder Include="feature\authentication\commands\logout\" />
+    <Folder Include="feature\authentication\commands\login\" />
+    <Folder Include="feature\authentication\dtos\" />
+    <Folder Include="feature\authentication\validators\" />
+    <Folder Include="feature\authentication\queries\" />
+    <Folder Include="feature\common\models\" />
+    <Folder Include="feature\common\mappings\" />
+    <Folder Include="feature\common\interfaces\" />
+    <Folder Include="feature\departments\commands\" />
+    <Folder Include="feature\departments\queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
+    <PackageReference Include="MediatR" Version="14.2.0" />
+  </ItemGroup>
+
+</Project>
