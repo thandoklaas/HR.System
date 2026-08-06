@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace HR.System.Infrastructure.identity;
 
-public class ApplicationRole : IdentityRole<int>
+public class ApplicationRole : IdentityRole
 {
     public string Description { get; set; } = string.Empty;
 

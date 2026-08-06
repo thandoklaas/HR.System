@@ -1,4 +1,5 @@
-﻿using HR.System.Infrastructure.persistance;
+﻿using HR.System.Application.interfaces;
+using HR.System.Infrastructure.persistance;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace HR.System.Infrastructure.repository;
