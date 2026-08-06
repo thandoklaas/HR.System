@@ -18,7 +18,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddDbContext<LeaveDbContext>(options =>
 {
     options.UseSqlServer(
-        @"Data Source=localhost\SQLEXPRESS;Database=LeaveManagementDb;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0",
+        builder.Configuration.GetConnectionString("LeaveManagementConnection"),
         sql =>
         {
             sql.MigrationsAssembly(typeof(LeaveDbContext).Assembly.FullName);
