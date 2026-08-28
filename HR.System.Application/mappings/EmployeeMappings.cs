@@ -16,7 +16,7 @@ namespace HR.System.Application.mappings
 
     public class EmployeeDbModelMappingProfile : Profile
     {
-        protected  EmployeeDbModelMappingProfile()
+        public EmployeeDbModelMappingProfile()
         {
             CreateMap<EmployeeViewModel, Employee>();
         }
