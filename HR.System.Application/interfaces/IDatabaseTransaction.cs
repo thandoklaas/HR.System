@@ -1,5 +1,4 @@
-﻿
-namespace HR.System.Infrastructure.repository;
+﻿namespace HR.System.Application.interfaces;
 
 /// <summary>
 /// Interface for providing database

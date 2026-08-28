@@ -1,4 +1,5 @@
 ﻿using HR.System.Application.enums;
+using HR.System.Application.interfaces;
 using HR.System.Infrastructure.persistance;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -105,7 +106,7 @@ public class EntityFrameworkRepository<T> : BaseEntityFrameworkRepository<T>, IR
         return await LeaveContext.SaveChangesAsync() > 0;
     }
 
-    //public async Task<T> FindAsync(int id) => LeaveContext.Set<T>().FindAsync(id);
+    public async Task<T> FindAsync(int id) => await LeaveContext.Set<T>().FindAsync(id);
 
     public async Task<T> GetFirstOrDefaultByExpressionAsync(Expression<Func<T, bool>> expression) 
         => await LeaveContext.Set<T>().FirstOrDefaultAsync(expression);

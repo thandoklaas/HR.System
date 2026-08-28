@@ -1,8 +1,9 @@
-using HR.System.Application.authentication;
 using HR.System.Application.interfaces;
+using HR.System.Application.mappings;
 using HR.System.Infrastructure.persistance;
-using HRSystem.Infrastructure.Authentication;
+using HR.System.Infrastructure.repository;
 using Microsoft.EntityFrameworkCore;
+using JwtSettings = HR.System.Application.authentication.JwtSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,14 +12,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
 builder.Services.Configure<JwtSettings>(
 builder.Configuration.GetSection(JwtSettings.SectionName));
+//builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(EntityFrameworkRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddAutoMapper(cfg =>
+{
+    // cfg.LicenseKey = "..."; // only if you have one
+}, AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddDbContext<LeaveDbContext>(options =>
 {
     options.UseSqlServer(
-        @"Data Source=localhost\SQLEXPRESS;Database=LeaveManagementDb;Integrated Security=True;Persist Security Info=False;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Command Timeout=0",
+        builder.Configuration.GetConnectionString("LeaveManagementConnection"),
         sql =>
         {
             sql.MigrationsAssembly(typeof(LeaveDbContext).Assembly.FullName);

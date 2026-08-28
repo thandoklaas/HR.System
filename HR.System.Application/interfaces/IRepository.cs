@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace HR.System.Infrastructure.repository;
+namespace HR.System.Application.interfaces;
 
 public interface IRepository<T>
     where T : class
@@ -88,7 +88,7 @@ public interface IRepository<T>
     /// </summary>
     /// <param name="id">Primary key</param>
     /// <returns>Model matching the expression or null</returns>
-    //Task<T> FindAsync(int id);
+    Task<T> FindAsync(int id);
 
     /// <summary>
     /// Returns a type T entity based on a specific expression criteria, else returns null

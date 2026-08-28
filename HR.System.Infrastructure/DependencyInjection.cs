@@ -2,7 +2,8 @@
 using HR.System.Infrastructure.authentication;
 using HR.System.Infrastructure.identity;
 using HR.System.Infrastructure.persistance;
-using HRSystem.Infrastructure.Authentication;
+using HR.System.Infrastructure.repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -40,7 +41,12 @@ public static class DependencyInjection
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));
 
-        services.AddScoped<IJwtService, JwtService>();
+        //services.AddScoped<IJwtService, JwtService>();
+
+        services.AddScoped<IDatabaseTransaction, EntityDatabaseTransaction>();
+
+        services.AddScoped(typeof(IRepository<>), typeof(EntityFrameworkRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // repositories
         // identity

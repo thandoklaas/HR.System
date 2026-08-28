@@ -1,4 +1,5 @@
-﻿using HR.System.Domain.entities;
+﻿using HR.System.Application.interfaces;
+using HR.System.Domain.entities;
 using HR.System.Infrastructure.persistance;
 
 namespace HR.System.Infrastructure.repository

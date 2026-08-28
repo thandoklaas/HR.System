@@ -1,6 +1,6 @@
 ﻿using HR.System.Domain.entities;
 
-namespace HR.System.Infrastructure.repository
+namespace HR.System.Application.interfaces
 {
     public interface IUnitOfWork
     {

@@ -2,11 +2,11 @@
 using System.Linq.Expressions;
 
 namespace HR.System.Infrastructure.repository;
-#nullable disable
+
 public abstract class BaseEntityFrameworkRepository<T>
     where T : class
 {
-
+#nullable disable
     protected LeaveDbContext LeaveContext { get; private set; }
     protected BaseEntityFrameworkRepository(LeaveDbContext context)
     {

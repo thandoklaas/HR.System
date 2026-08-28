@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace HR.System.Infrastructure.identity;
 
-public class ApplicationUser : IdentityUser<int>
+public class ApplicationUser : IdentityUser
 {
     public string FirstName { get; set; } = string.Empty;
 
@@ -29,4 +29,6 @@ public class ApplicationUser : IdentityUser<int>
     public string? RefreshToken { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
+
+    public ICollection<ApplicationRole> Roles { get; set; } = null!;
 }

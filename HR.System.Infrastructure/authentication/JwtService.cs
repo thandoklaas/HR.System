@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace HRSystem.Infrastructure.Authentication;
+namespace HR.System.Infrastructure.authentication;
 
 public sealed class JwtService : IJwtService
 {
