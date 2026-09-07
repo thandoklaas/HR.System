@@ -17,4 +17,36 @@ internal class TestAuthenticationAdapter : IAuthenticationAdapter
     public string GetCurrentUserFullName() => "Test User";
 
     public bool HasDataProfile() => true;
+
+    string IAuthenticationAdapter.GetCurrentUserName()
+    {
+        throw new NotImplementedException();
+    }
+
+    string IAuthenticationAdapter.GetCurrentUserId()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<string> IAuthenticationAdapter.GetCurrentUserRoleId()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<string> IAuthenticationAdapter.GetCurrentUserRoleName()
+    {
+        throw new NotImplementedException();
+    }
+
+    Task<string> IAuthenticationAdapter.GetCurrentUserEmailAddress() => Task.FromResult("tandoklaas0@gmail.com");
+
+    Task<string> IAuthenticationAdapter.GetCurrentUserFullName()
+    {
+        throw new NotImplementedException();
+    }
+
+    bool IAuthenticationAdapter.HasDataProfile()
+    {
+        throw new NotImplementedException();
+    }
 }

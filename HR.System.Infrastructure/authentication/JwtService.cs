@@ -1,86 +1,141 @@
-﻿using HR.System.Application.authentication;
-using HR.System.Application.interfaces;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using HR.System.Application.authentication;
+using HR.System.Application.interfaces;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace HR.System.Infrastructure.authentication;
 
 public sealed class JwtService : IJwtService
 {
-    private readonly JwtSettings _settings;
+    private readonly JwtSettings _jwtSettings;
 
-    public JwtService(IOptions<JwtSettings> settings)
+    public JwtService(IOptions<JwtSettings> jwtSettings)
     {
-        _settings = settings.Value;
+        _jwtSettings = jwtSettings.Value;
     }
 
-    public AuthResponse GenerateToken(IEnumerable<Claim> claims)
+    public async Task<AuthResponse> GenerateTokenAsync(
+        string userId,
+        string email,
+        string firstName,
+        string lastName,
+        IEnumerable<string> roles,
+        CancellationToken cancellationToken = default)
     {
-        var expires = DateTime.UtcNow.AddMinutes(_settings.AccessTokenMinutes);
+        var roleList = roles.ToList();
+
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Sub, userId),
+            new(JwtRegisteredClaimNames.Email, email),
+
+            new(ClaimTypes.NameIdentifier, userId),
+            new(ClaimTypes.Email, email),
+            new(ClaimTypes.GivenName, firstName),
+            new(ClaimTypes.Surname, lastName)
+        };
+
+        foreach (var role in roleList)
+        {
+            claims.Add(
+                new Claim(ClaimTypes.Role, role));
+        }
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_settings.SecretKey));
+            Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
 
         var credentials = new SigningCredentials(
             key,
             SecurityAlgorithms.HmacSha256);
 
-        var jwt = new JwtSecurityToken(
-            issuer: _settings.Issuer,
-            audience: _settings.Audience,
+        var expiresAt =
+            DateTime.UtcNow.AddMinutes(
+                _jwtSettings.ExpirationMinutes);
+
+        var token = new JwtSecurityToken(
+            issuer: _jwtSettings.Issuer,
+            audience: _jwtSettings.Audience,
             claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: expires,
+            expires: expiresAt,
             signingCredentials: credentials);
 
-        return new AuthResponse
-        {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
-            RefreshToken = GenerateRefreshToken(),
-            Expires = expires
-        };
+        var accessToken =
+            new JwtSecurityTokenHandler().WriteToken(token);
+
+        var refreshToken = GenerateRefreshToken();
+
+        return await Task.FromResult(
+            new AuthResponse
+            {
+                AccessToken = accessToken,
+                RefreshToken = refreshToken,
+                ExpiresAt = expiresAt,
+                UserId = userId,
+                Email = email,
+                FirstName = firstName,
+                LastName = lastName,
+                Roles = roleList
+            });
     }
 
     public string GenerateRefreshToken()
     {
-        var randomBytes = RandomNumberGenerator.GetBytes(64);
+        var randomNumber = new byte[64];
 
-        return Convert.ToBase64String(randomBytes);
+        using var rng =
+            RandomNumberGenerator.Create();
+
+        rng.GetBytes(randomNumber);
+
+        return Convert.ToBase64String(randomNumber);
     }
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    public ClaimsPrincipal? GetPrincipalFromExpiredToken(
+        string token)
     {
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = true,
-            ValidateIssuer = true,
-            ValidateIssuerSigningKey = true,
-            ValidateLifetime = false,
+        var tokenValidationParameters =
+            new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidAudience = _jwtSettings.Audience,
 
-            ValidIssuer = _settings.Issuer,
-            ValidAudience = _settings.Audience,
+                ValidateIssuer = true,
+                ValidIssuer = _jwtSettings.Issuer,
 
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_settings.SecretKey))
-        };
+                ValidateIssuerSigningKey = true,
 
-        var tokenHandler = new JwtSecurityTokenHandler();
+                IssuerSigningKey =
+                    new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(
+                            _jwtSettings.SecretKey)),
+
+                ValidateLifetime = false
+            };
+
+        var tokenHandler =
+            new JwtSecurityTokenHandler();
 
         try
         {
-            var principal = tokenHandler.ValidateToken(
-                token,
-                validationParameters,
-                out SecurityToken securityToken);
+            var principal =
+                tokenHandler.ValidateToken(
+                    token,
+                    tokenValidationParameters,
+                    out var securityToken);
 
-            if (securityToken is not JwtSecurityToken jwt ||
-                !jwt.Header.Alg.Equals(
-                    SecurityAlgorithms.HmacSha256,
-                    StringComparison.OrdinalIgnoreCase))
+            if (securityToken is not JwtSecurityToken jwtSecurityToken)
+            {
+                return null;
+            }
+
+            if (!jwtSecurityToken.Header.Alg
+                    .Equals(
+                        SecurityAlgorithms.HmacSha256,
+                        StringComparison.OrdinalIgnoreCase))
             {
                 return null;
             }
@@ -93,3 +148,4 @@ public sealed class JwtService : IJwtService
         }
     }
 }
+

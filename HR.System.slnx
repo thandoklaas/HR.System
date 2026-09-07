@@ -2,6 +2,8 @@
   <Project Path="HR.System.Application/HR.System.Application.csproj" />
   <Project Path="HR.System.Domain/HR.System.Domain.csproj" />
   <Project Path="HR.System.Infrastructure/HR.System.Infrastructure.csproj" />
-  <Project Path="HR.System.Test/HR.System.Test.csproj" Id="14ed2b01-832a-4fe4-85ad-066abefe33e3" />
+  <Project Path="HR.System.Test/HR.System.Test.csproj" Id="14ed2b01-832a-4fe4-85ad-066abefe33e3">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="HR.System/HR.System.csproj" />
 </Solution>

@@ -1,9 +1,11 @@
 ﻿using HR.System.Domain.entities;
+using HR.System.Infrastructure.identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HR.System.Infrastructure.persistance;
 
-public class LeaveDbContext : DbContext
+public class LeaveDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public LeaveDbContext(DbContextOptions<LeaveDbContext> options)
         : base(options)

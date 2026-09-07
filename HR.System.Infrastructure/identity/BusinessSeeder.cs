@@ -14,6 +14,8 @@ public class BusinessDataSeeder
 
     public async Task SeedAsync()
     {
+        await _context.Database.MigrateAsync();
+
         await SeedDepartments();
 
         await SeedJobTitles();
@@ -23,6 +25,8 @@ public class BusinessDataSeeder
         await SeedEmployeeTypes();
 
         await SeedWorkflowLevels();
+
+        await _context.SaveChangesAsync();
     }
 
    
@@ -52,6 +56,12 @@ public class BusinessDataSeeder
     }
 
     private async Task SeedWorkflowLevels()
+    {
+        if (!await _context.LeaveStatuses.AnyAsync())
+            await _context.LeaveStatuses.AddRangeAsync(SeedData.LeaveStatuses);
+    }
+
+    private async Task SeedIdentityRole()
     {
         if (!await _context.LeaveStatuses.AnyAsync())
             await _context.LeaveStatuses.AddRangeAsync(SeedData.LeaveStatuses);

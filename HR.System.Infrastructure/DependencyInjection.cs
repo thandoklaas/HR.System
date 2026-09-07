@@ -3,8 +3,6 @@ using HR.System.Infrastructure.authentication;
 using HR.System.Infrastructure.identity;
 using HR.System.Infrastructure.persistance;
 using HR.System.Infrastructure.repository;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,21 +20,21 @@ public static class DependencyInjection
                 configuration.GetConnectionString("LeaveManagementConnection")));
 
         services
-            .AddIdentity<ApplicationUser, ApplicationRole>(options =>
+            .AddIdentityCore<ApplicationUser>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireNonAlphanumeric = true;
-
                 options.Password.RequiredLength = 8;
 
                 options.User.RequireUniqueEmail = true;
 
                 options.SignIn.RequireConfirmedEmail = false;
             })
-            .AddEntityFrameworkStores<LeaveDbContext>()
-            .AddDefaultTokenProviders();
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<LeaveDbContext>();
+           // .AddDefaultTokenProviders();
 
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));

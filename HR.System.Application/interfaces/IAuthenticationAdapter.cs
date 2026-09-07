@@ -4,10 +4,10 @@ public interface IAuthenticationAdapter
 {
     string GetCurrentUserName();
     string GetCurrentUserId();
-    string GetCurrentUserRoleId();
-    string GetCurrentUserRoleName();
-    string GetCurrentUserEmailAddress();
-    string GetCurrentUserFullName();
+    Task<string> GetCurrentUserRoleId();
+    Task<string> GetCurrentUserRoleName();
+    Task<string> GetCurrentUserEmailAddress();
+    Task<string> GetCurrentUserFullName();
     bool HasDataProfile();
 }
 

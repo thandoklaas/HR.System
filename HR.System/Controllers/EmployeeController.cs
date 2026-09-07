@@ -1,48 +1,70 @@
 ﻿using HR.System.Application.feature.employees.commands;
+using HR.System.Application.viewmodels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Web.Http;
-using FromBodyAttribute = System.Web.Http.FromBodyAttribute;
-using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
 
-namespace HR.System.Controllers
+namespace HR.System.Controllers;
+
+[ApiController]
+[Route("api/[employee]")]
+public class EmployeeController : ControllerBase
 {
+    private readonly IMediator _mediator;
 
-    //[Route("api/[controller]")]
-    [ApiController]
-    public class EmployeeController : ControllerBase
+    public EmployeeController(IMediator mediator)
     {
-        private readonly IMediator _mediator;
-        public EmployeeController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
+        _mediator = mediator;
+    }
 
-        [HttpPost]
-        public async Task<IHttpActionResult> CreateEmployee([FromBody] CreateEmployeeCommand command)
-        {
-            return (IHttpActionResult)Ok(await _mediator.Send(command));
-        }
+    [HttpPost]
+    public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeRequest request)
+    {
+
+        var command = new CreateEmployeeCommand(
+            new EmployeeViewModel
+            {
+                EmployeeNumber = request.EmployeeNumber,
+                Name = request.Name,
+                Surname = request.Surname,
+                HireDate = request.HireDate,
+                AddressId = request.AddressId,
+                ContactDetailId = request.ContactDetailId,
+                DepartmentId = request.DepartmentId,
+                EmployeeTypeId = request.EmployeeTypeId,
+                ManagerId = request.ManagerId,
+                JobTitleId = request.JobTitleId
+            });
 
 
-        [HttpPost]
-        public async Task<IHttpActionResult> UpdateEmployee([FromBody] UpdateEmployeeCommand command)
-        {
-            return (IHttpActionResult)Ok(await _mediator.Send(command));
-        }
+        var result = await _mediator.Send(command);
 
+        return Ok(result);
+    }
 
-        [HttpPost]
-        public async Task<IHttpActionResult> ActivateEmployee([FromBody] ActivateEmployeeCommand command)
-        {
-            return (IHttpActionResult)Ok(await _mediator.Send(command));
-        }
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateEmployee(
+        [FromBody] UpdateEmployeeCommand command)
+    {
+        var result = await _mediator.Send(command);
 
-        [HttpPost]
-        public async Task<IHttpActionResult> DeactivateEmployee([FromBody] DeactivateEmployeeCommand command)
-        {
-            return (IHttpActionResult)Ok(await _mediator.Send(command));
-        }
+        return Ok(result);
+    }
 
+    [HttpPost("activate")]
+    public async Task<IActionResult> ActivateEmployee(
+        [FromBody] ActivateEmployeeCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return Ok(result);
+    }
+
+    [HttpPost("deactivate")]
+    public async Task<IActionResult> DeactivateEmployee(
+        [FromBody] DeactivateEmployeeCommand command)
+    {
+        var result = await _mediator.Send(command);
+
+        return Ok(result);
     }
 }

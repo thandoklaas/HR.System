@@ -2,7 +2,7 @@
 
 public sealed class JwtSettings
 {
-    public const string SectionName = "Jwt";
+    public const string SectionName = "JwtSettings";
 
     public string Issuer { get; set; } = string.Empty;
 
@@ -13,4 +13,5 @@ public sealed class JwtSettings
     public int AccessTokenMinutes { get; set; }
 
     public int RefreshTokenDays { get; set; }
+    public double ExpirationMinutes { get; internal set; }
 }

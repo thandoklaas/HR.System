@@ -86,7 +86,7 @@ public class EntityFrameworkRepository<T> : BaseEntityFrameworkRepository<T>, IR
 
     public async Task<bool> UpdateAsync(T model)
     {
-        LeaveContext.Entry(model).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        LeaveContext.Entry(model).State = EntityState.Modified;
         return await LeaveContext.SaveChangesAsync() > 0;
     }
 

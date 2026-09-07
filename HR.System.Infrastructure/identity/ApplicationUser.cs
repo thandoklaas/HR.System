@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-
+﻿using Microsoft.AspNetCore.Identity;
 namespace HR.System.Infrastructure.identity;
 
 public class ApplicationUser : IdentityUser
@@ -10,10 +9,6 @@ public class ApplicationUser : IdentityUser
 
     public bool IsActive { get; set; } = true;
 
-    /// <summary>
-    /// Links the Identity user to the HR Employee record.
-    /// Nullable because an Identity user may exist before an employee profile is created.
-    /// </summary>
     public int? EmployeeId { get; set; }
 
     public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
@@ -29,6 +24,4 @@ public class ApplicationUser : IdentityUser
     public string? RefreshToken { get; set; }
 
     public DateTime? RefreshTokenExpiryTime { get; set; }
-
-    public ICollection<ApplicationRole> Roles { get; set; } = null!;
 }

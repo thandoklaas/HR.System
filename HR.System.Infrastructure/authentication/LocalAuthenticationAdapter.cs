@@ -1,12 +1,11 @@
 ﻿using HR.System.Application.interfaces;
 using HR.System.Infrastructure.identity;
 using HR.System.Infrastructure.persistance;
-using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
-using IdentityRole = Microsoft.AspNet.Identity.EntityFramework.IdentityRole;
-using IdentityUser = Microsoft.AspNet.Identity.EntityFramework.IdentityUser;
-using Microsoft.AspNet.Identity;
+//using System.Data.Entity;
 
 namespace HR.System.Infrastructure.authentication
 {
@@ -14,15 +13,23 @@ namespace HR.System.Infrastructure.authentication
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private readonly UserStore<IdentityUser> _userManager ;
+
         public LocalAuthenticationAdapter(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
-        }
-        public string GetCurrentUserName() => _httpContextAccessor.HttpContext.User.Identity.GetUserName();
 
-        public string GetCurrentUserFullName()
+            _userManager =new UserStore<IdentityUser>(new LeaveDbContext());
+        }
+        //public string GetCurrentUserName() => _httpContextAccessor?.HttpContext?.User?.Identity?.Name;
+
+        public string GetCurrentUserName() =>
+            _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? "System";
+
+        public async Task<string> GetCurrentUserFullName()
         {
-            var user = GetUser();
+            var user = await GetUser();
+
             return user.FirstName + " " + user.LastName;
         }
 
@@ -36,42 +43,58 @@ namespace HR.System.Infrastructure.authentication
         }
 
 
-        public string GetCurrentUserRoleId()
+        public async Task<string> GetCurrentUserRoleId()
         {
-            var user = GetUser();
+            var user = await GetUser();
 
-
-            return user == null || !user.Roles.Any()
+            return user == null 
                 ? string.Empty
-                : user.Roles.First().Id.ToString();
+                : user.Id.ToString();
         }
 
-        public string GetCurrentUserRoleName() => GetRole()?.Name ?? string.Empty;
+        public async Task<string> GetCurrentUserRoleName()
+        {
+            var result = await GetRole();
+               
+            return result.UserName ?? string.Empty;
+        }
 
-        public string GetCurrentUserEmailAddress() => GetUser().Email;
+        public async Task<string> GetCurrentUserEmailAddress()
+        {
+            var result = await GetUser();
+
+            return result.Email ?? string.Empty;
+        }
 
         public bool HasDataProfile()
         {
-            using (var context = new LeaveDbContext())
-            {
-                var userId = GetCurrentUserId();
-                var roleId = GetCurrentUserRoleId();
+            return true;
+            //using (var context = new LeaveDbContext())
+            //{
+            //    var userId = GetCurrentUserId();
+            //    var roleId = GetCurrentUserRoleId();
 
-                return userId != null && roleId != null;
-            }
+            //    return userId != null && roleId != null;
+            //}
         }
 
-        protected ApplicationUser GetUser()
+        protected async Task<ApplicationUser> GetUser()
         {
-            var userManager = new UserManager<IdentityUser>(new UserStore<IdentityUser>(new IdentityDbContext()));
-           var result = userManager.FindById(GetCurrentUserId());
+
+            var result = await _userManager.FindByIdAsync(GetCurrentUserId());
+            if (result == null)
+            {
+                throw new Exception("User not found");
+            }
             return (ApplicationUser)result;
         }
 
-        protected ApplicationRole GetRole()
+        protected async Task<IdentityUser> GetRole()
         {
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(new IdentityDbContext()));
-            return (ApplicationRole)roleManager.FindById(GetCurrentUserRoleId());
+            var userId = GetCurrentUserId();
+            var data = await _userManager.FindByIdAsync(userId);
+    
+            return data;
         }
     }
 }

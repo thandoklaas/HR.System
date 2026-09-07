@@ -24,8 +24,8 @@ public class BaseEmployeeCommandHandler
     protected async Task DuplicateCheck(EmployeeViewModel viewModel)
     {
         var duplicate = await _uow.Employee.AnyAsync(
-                                            t => t.EmployeeId != viewModel.EmployeeId &&
-                                            t.EmployeeNumber.Equals(viewModel.EmployeeNumber, StringComparison.InvariantCultureIgnoreCase));
+                                            t => t.EmployeeId == viewModel.EmployeeId &&
+                                            t.EmployeeNumber.ToLower() == viewModel.EmployeeNumber.ToLower());
 
         if (duplicate)
         {

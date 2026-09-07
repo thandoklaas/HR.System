@@ -16,7 +16,7 @@ public class ActivateEmployeeCommand : IRequest<bool>
     public int Id { get; }
 }
 
-public class ActivateEmployeeCommandHandler : BaseEmployeeCommandHandler, IRequestHandler<DeactivateEmployeeCommand, bool>
+public class ActivateEmployeeCommandHandler : BaseEmployeeCommandHandler, IRequestHandler<ActivateEmployeeCommand, bool>
 {
     private readonly IUnitOfWork _uow;
 
@@ -25,7 +25,7 @@ public class ActivateEmployeeCommandHandler : BaseEmployeeCommandHandler, IReque
     {
         _uow = uow;
     }
-    public async Task<bool> Handle(DeactivateEmployeeCommand command, CancellationToken cancellationToken)
+    public async Task<bool> Handle(ActivateEmployeeCommand command, CancellationToken cancellationToken)
     {
         using (var transaction = _uow.BeginTransaction())
         {

@@ -92,3 +92,26 @@ public class EmployeeViewModel
     #endregion
 }
 
+public class CreateEmployeeRequest
+{
+    public string EmployeeNumber { get; set; } = string.Empty;
+
+    public string Name { get; set; } = string.Empty;
+
+    public string Surname { get; set; } = string.Empty;
+
+    public DateOnly HireDate { get; set; }
+
+    public int AddressId { get; set; }
+
+    public int ContactDetailId { get; set; }
+
+    public int DepartmentId { get; set; }
+
+    public int EmployeeTypeId { get; set; }
+
+    public int? ManagerId { get; set; }
+
+    public int JobTitleId { get; set; }
+}
+
