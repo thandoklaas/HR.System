@@ -17,7 +17,7 @@ public static class SeedData
             },
             new()
             {
-               Description = "Information Technology department",
+                Description = "Information Technology department",
                 DepartmentName = "Information Technology",
                 CreatedBy = "System",
                 CreatedDate = DateTime.UtcNow,
@@ -77,7 +77,7 @@ public static class SeedData
         },
         new()
         {
-                        JobTitleName = "ANLST2",
+            JobTitleName = "ANLST2",
             Description = "Marketing Analyst",
             CreatedBy = "System",
             CreatedDate = DateTime.UtcNow,

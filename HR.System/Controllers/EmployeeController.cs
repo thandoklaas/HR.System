@@ -1,13 +1,16 @@
 ﻿using HR.System.Application.feature.employees.commands;
+using HR.System.Application.feature.employees.queries;
 using HR.System.Application.viewmodels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HR.System.Controllers;
 
 [ApiController]
-[Route("api/[employee]")]
-public class EmployeeController : ControllerBase
+[Route("api/employee")]
+[Authorize]
+public sealed class EmployeeController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -16,6 +19,7 @@ public class EmployeeController : ControllerBase
         _mediator = mediator;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeRequest request)
     {
@@ -41,30 +45,51 @@ public class EmployeeController : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("update")]
-    public async Task<IActionResult> UpdateEmployee(
-        [FromBody] UpdateEmployeeCommand command)
-    {
-        var result = await _mediator.Send(command);
+    //[Authorize]
+    //[HttpPost("update")]
+    //public async Task<IActionResult> UpdateEmployee(
+    //    [FromBody] UpdateEmployeeCommand command)
+    //{
+    //    var result = await _mediator.Send(command);
 
-        return Ok(result);
+    //    return Ok(result);
+    //}
+
+    //[Authorize]
+    //[HttpPost("activate")]
+    //public async Task<IActionResult> ActivateEmployee(
+    //    [FromBody] ActivateEmployeeCommand command)
+    //{
+    //    var result = await _mediator.Send(command);
+
+    //    return Ok(result);
+    //}
+
+    //[Authorize]
+    //[HttpPost("deactivate")]
+    //public async Task<IActionResult> DeactivateEmployee(
+    //    [FromBody] DeactivateEmployeeCommand command)
+    //{
+    //    var result = await _mediator.Send(command);
+
+    //    return Ok(result);
+    //}
+
+    //[Authorize]
+    //[HttpGet]
+    //public async Task<IActionResult> GetCollection(GetFilteredEmployeeCollectionRequest request)
+    //{
+    //    var collection = await _mediator.Send(request);
+    //    return Ok(collection);
+    //}
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        var collection = await _mediator.Send(new GetEmployeeCollectionRequest());
+        return Ok(collection);
     }
 
-    [HttpPost("activate")]
-    public async Task<IActionResult> ActivateEmployee(
-        [FromBody] ActivateEmployeeCommand command)
-    {
-        var result = await _mediator.Send(command);
 
-        return Ok(result);
-    }
-
-    [HttpPost("deactivate")]
-    public async Task<IActionResult> DeactivateEmployee(
-        [FromBody] DeactivateEmployeeCommand command)
-    {
-        var result = await _mediator.Send(command);
-
-        return Ok(result);
-    }
 }

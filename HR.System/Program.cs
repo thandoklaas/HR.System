@@ -8,8 +8,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Text;  
-using JwtSettings = HR.System.Application.authentication.JwtSettings;
+using JwtSettings = HR.System.Infrastructure.authentication.JwtSettings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -163,7 +164,25 @@ builder.Services.AddHttpContextAccessor();
 // --------------------------------------------------
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter your JWT token."
+    });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] =
+                []
+        });
+});
 
 
 var app = builder.Build();
@@ -188,7 +207,6 @@ if (app.Environment.IsDevelopment())
 
 using (var scope = app.Services.CreateScope())
 {
-
     var context = scope.ServiceProvider
         .GetRequiredService<LeaveDbContext>();
 
@@ -198,12 +216,9 @@ using (var scope = app.Services.CreateScope())
 
     await identitySeeder.SeedAsync();
 
-
     var businessSeeder = new BusinessDataSeeder(context);
 
     await businessSeeder.SeedAsync();
-
-
 }
 
 

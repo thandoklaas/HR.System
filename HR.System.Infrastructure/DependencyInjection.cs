@@ -3,6 +3,7 @@ using HR.System.Infrastructure.authentication;
 using HR.System.Infrastructure.identity;
 using HR.System.Infrastructure.persistance;
 using HR.System.Infrastructure.repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,13 +34,13 @@ public static class DependencyInjection
                 options.SignIn.RequireConfirmedEmail = false;
             })
             .AddRoles<ApplicationRole>()
-            .AddEntityFrameworkStores<LeaveDbContext>();
-           // .AddDefaultTokenProviders();
+            .AddEntityFrameworkStores<LeaveDbContext>()
+            .AddDefaultTokenProviders();
 
         services.Configure<JwtSettings>(
             configuration.GetSection(JwtSettings.SectionName));
 
-        //services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IJwtService, JwtService>();
 
         services.AddScoped<IDatabaseTransaction, EntityDatabaseTransaction>();
 

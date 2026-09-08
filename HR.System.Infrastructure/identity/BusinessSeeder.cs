@@ -60,10 +60,4 @@ public class BusinessDataSeeder
         if (!await _context.LeaveStatuses.AnyAsync())
             await _context.LeaveStatuses.AddRangeAsync(SeedData.LeaveStatuses);
     }
-
-    private async Task SeedIdentityRole()
-    {
-        if (!await _context.LeaveStatuses.AnyAsync())
-            await _context.LeaveStatuses.AddRangeAsync(SeedData.LeaveStatuses);
-    }
 }
